@@ -87,7 +87,7 @@ config = defaultConfiguration
                                \git checkout -b master --track origin/master\n\
                                \\n\
                                \# Overwrite existing files with new files\n\
-                               \cp -a _site/. .\n\
+                               \rsync -a --filter='P _site/' --delete-excluded _site/ .\n\
                                \\n\
                                \# Commit\n\
                                \git add -A\n\

@@ -79,8 +79,8 @@ config = defaultConfiguration
                                \git checkout develop\n\
                                \\n\
                                \# Build new files\n\
-                               \stack exec myblog clean\n\
-                               \stack exec myblog build\n\
+                               \stack exec melissa-blog clean\n\
+                               \stack exec melissa-blog build\n\
                                \\n\
                                \# Get previous files\n\
                                \git fetch -all\n\

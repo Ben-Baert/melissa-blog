@@ -18,13 +18,13 @@ main = hakyllWith config $ do
         compile compressCssCompiler
 
     match (fromList ["about.rst", "contact.md"]) $ do
-        route   $ setExtension ""
+        route   $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
     match "posts/*" $ do
-        route $ setExtension ""
+        route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
@@ -87,7 +87,7 @@ config = defaultConfiguration
                                \git checkout -b master --track origin/master\n\
                                \\n\
                                \# Overwrite existing files with new files\n\
-                               \rsync -a --exclude='/.git' --exclude='CNAME' --exclude='LICENSE' --exclude='README.md' --filter 'P _site/' --delete-exclude=_site/ .\n\
+                               \rsync -a --exclude='/.git' --exclude='CNAME' --exclude='LICENSE' --exclude='README.md' --filter 'P _site/' _site/ .\n\
                                \\n\
                                \# Commit\n\
                                \git add -A\n\

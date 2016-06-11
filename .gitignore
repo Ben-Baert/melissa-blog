@@ -21,3 +21,5 @@ CNAME
 README.md
 .gitignore
 .git
+_cache
+_site

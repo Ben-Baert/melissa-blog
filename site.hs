@@ -3,7 +3,6 @@
 import           Data.Monoid (mappend)
 import           Hakyll
 
-
 --------------------------------------------------------------------------------
 
 
@@ -17,7 +16,7 @@ main = hakyllWith config $ do
         route   idRoute
         compile compressCssCompiler
 
-    match (fromList ["about.rst", "contact.md", "pictures.md"]) $ do
+    match (fromList ["about.rst", "contact.md"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
@@ -28,6 +27,13 @@ main = hakyllWith config $ do
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= relativizeUrls
+
+    match "picture-posts/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
     create ["archive.html"] $ do
@@ -44,6 +50,19 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
 
+    create ["pictures.html"] $ do
+        route idRoute
+        compile $ do
+            pictureposts <- loadAll "picture-posts/*"
+            let pictureCtx = 
+                    listField "posts" defaultContext (return pictureposts) `mappend`
+                    constField "title" "Pictures"                          `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/pictures.html" pictureCtx
+                >>= loadAndApplyTemplate "templates/default.html" pictureCtx
+                >>= relativizeUrls
 
     match "index.html" $ do
         route idRoute

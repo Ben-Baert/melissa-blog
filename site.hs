@@ -83,11 +83,11 @@ config = defaultConfiguration
                                \stack exec melissa-blog build\n\
                                \\n\
                                \# Get previous files\n\
-                               \git fetch -all\n\
+                               \git fetch --all\n\
                                \git checkout -b master --track origin/master\n\
                                \\n\
                                \# Overwrite existing files with new files\n\
-                               \rsync -a --filter='P _site/' --delete-excluded _site/ .\n\
+                               \rsync -a --excluded '/.git' --excluded 'CNAME' --excluded 'LICENSE' --excluded 'README.md' --filter 'P _site/' --delete-excluded _site/ .\n\
                                \\n\
                                \# Commit\n\
                                \git add -A\n\

@@ -30,7 +30,7 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
 
-    create ["archive"] $ do
+    create ["archive.html"] $ do
         route idRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
@@ -87,7 +87,7 @@ config = defaultConfiguration
                                \git checkout -b master --track origin/master\n\
                                \\n\
                                \# Overwrite existing files with new files\n\
-                               \rsync -a --exclude=/.git --exclude=CNAME --exclude=LICENSE --exclude=README.md  --delete _site/ .\n\
+                               \rsync -a --exclude-from=.gitignore  --delete _site/ .\n\
                                \\n\
                                \# Commit\n\
                                \git add -A\n\

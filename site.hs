@@ -175,7 +175,7 @@ main = hakyllWith config $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "blog/**"
+            posts <- recentFirst =<< loadAll "*/**.md"
             let indexCtx =
                     listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Home"                  `mappend`

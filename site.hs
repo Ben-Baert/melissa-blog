@@ -160,8 +160,8 @@ teaserCtx =
 
 categoryCtx :: Tags -> Tags -> Context String
 categoryCtx tags category =
-        tagsField "category" category `mappend`
-        tagsField "tags" tags         `mappend`
+        categoryField "category" category `mappend`
+        tagsField     "tags"     tags     `mappend`
         teaserCtx
 
 --------------------------------------------------------------------------------

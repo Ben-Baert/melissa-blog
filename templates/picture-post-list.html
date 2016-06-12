@@ -1,7 +1,5 @@
 <ul>
     $for(posts)$
-        <li>
-            <a href="$url$">$title$</a>
-        </li>
+        $partial("templates/picture-post.html")$
     $endfor$
 </ul>

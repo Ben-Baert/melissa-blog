@@ -60,6 +60,25 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
+    albums <- buildCategories "pictures/**.md" (fromCapture "album/*.html")
+
+    tagsRules albums $ \category pattern -> do
+        let title = "Pictures in " ++ category
+        route cleanRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll pattern
+            let ctx =
+                    constField "title" title                        `mappend`
+                    listField "posts" defaultContext (return posts) `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/album.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx
+                >>= relativizeUrls
+                >>= cleanIndexUrls
+
+
     match "posts/**" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` 
                 cleanRoute
@@ -71,9 +90,9 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
 
-    match "picture-posts/*" $ do
-        route $ gsubRoute "picture-posts/" (const "pictures/") 
-                `composeRoutes` cleanRoute
+    match "pictures/**" $ do
+        route $ cleanRoute 
+                
         
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
@@ -99,10 +118,9 @@ main = hakyllWith config $ do
     create ["pictures.html"] $ do
         route cleanRoute 
         compile $ do
-            pictureposts <- loadAll "picture-posts/*"
             let pictureCtx = 
-                    listField "posts" defaultContext (return pictureposts) `mappend`
-                    constField "title" "Pictures"                          `mappend`
+                    field "albums" (\_ -> renderTagList albums)            `mappend`   
+                    constField "title" "Albums"                          `mappend`
                     defaultContext
 
             makeItem ""

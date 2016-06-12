@@ -1,10 +1,14 @@
 ---
 title: 5 reasons why being a Digital Nomad is better than a regular 9-5 job
+tags: remote-jobs, work
+date: 2016-06-12
 ---
 
 The constant, speedy development in STEM, particularly technology, has ensured that our working world has changed significantly. We no longer have to be tied to 9-5 jobs or to a small, dark cubicle in an office somewhere, counting down the days to your next holiday away to sunnier locations. It is now possible to be a 'digital nomad,' where you can develop a location-independent business and career pretty much _anywhere in the world_ from your laptop!
 
-Interested, but need a bit more convincing? Here are top 5 reasons why being a Digital Nomad blows having a 9-5 job out of the water:
+Interested, but need a bit more convincing? Here are top 5 reasons why being a Digital Nomad blows having a 9-5 job out of the water.
+
+<!--more-->
 
 ### 1. You can work in any location in the world, as long as you have internet access. 
 

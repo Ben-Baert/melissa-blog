@@ -66,8 +66,8 @@ main = hakyllWith config $ do
 
         compile $ pandocCompiler
             >>= saveSnapshot "content"
-            >>= loadAndApplyTemplate "templates/post.html"    defaultContext
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyTemplate "templates/post.html"    (categoryCtx tags categories) 
+            >>= loadAndApplyTemplate "templates/default.html" (categoryCtx tags categories) 
             >>= relativizeUrls
             >>= cleanIndexUrls
 
@@ -154,8 +154,15 @@ cleanIndex url
 
 --------------------------------------------------------------------------------
 teaserCtx :: Context String
-teaserCtx = teaserField "teaser" "content" `mappend`
-            defaultContext
+teaserCtx = 
+        teaserField "teaser" "content" `mappend`
+        defaultContext
+
+categoryCtx :: Tags -> Tags -> Context String
+categoryCtx tags category =
+        tagsField "category" category `mappend`
+        tagsField "tags" tags         `mappend`
+        teaserCtx
 
 --------------------------------------------------------------------------------
 config :: Configuration

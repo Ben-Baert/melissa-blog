@@ -3,4 +3,5 @@
 - New template (bootstrap)
 - Picture albums
 - Multiple abouts
+- Search engines
 - Blog categories

@@ -25,6 +25,7 @@ main = hakyllWith config $ do
     match "posts/*" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
+            >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
@@ -69,8 +70,8 @@ main = hakyllWith config $ do
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
+                    listField "posts" teaserCtx (return posts) `mappend`
+                    constField "title" "Home"                  `mappend`
                     defaultContext
 
             getResourceBody
@@ -87,6 +88,9 @@ postCtx =
     dateField "date" "%B %e, %Y" `mappend`
     defaultContext
 
+teaserCtx :: Context String
+teaserCtx = teaserField "teaser" "content" `mappend`
+            postCtx
 
 --------------------------------------------------------------------------------
 config :: Configuration

@@ -8,7 +8,7 @@ The constant, speedy development in STEM, particularly technology, has ensured t
 
 Interested, but need a bit more convincing? Here are top 5 reasons why being a Digital Nomad blows having a 9-5 job out of the water.
 
-<!--more-->
+<div></div><!--more-->
 
 ### 1. You can work in any location in the world, as long as you have internet access. 
 

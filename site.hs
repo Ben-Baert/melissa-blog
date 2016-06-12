@@ -25,17 +25,56 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
 
-    match "posts/*" $ do
-        route $ gsubRoute "posts/" (const "") `composeRoutes` cleanRoute
+    tags <- buildTags "posts/**.md" (fromCapture "tags/*.html")
+    categories <- buildCategories "posts/**.md" (fromCapture "categories/*.html")
+
+    tagsRules tags $ \tag pattern -> do
+        let title = "Posts tagged " ++ tag
+        route cleanRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll pattern
+            let ctx = 
+                    constField "title" title                        `mappend`
+                    listField "posts" defaultContext (return posts) `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/tag.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx
+                >>= relativizeUrls
+                >>= cleanIndexUrls
+
+    tagsRules categories $ \category pattern -> do
+        let title = "Posts in " ++ category
+        route cleanRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll pattern
+            let ctx =
+                    constField "title" title                        `mappend`
+                    listField "posts" defaultContext (return posts) `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/category.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx
+                >>= relativizeUrls
+                >>= cleanIndexUrls
+
+    match "posts/**" $ do
+        route $ gsubRoute "posts/" (const "") `composeRoutes` 
+                cleanRoute
+
         compile $ pandocCompiler
             >>= saveSnapshot "content"
-            >>= loadAndApplyTemplate "templates/post.html"    postCtx
-            >>= loadAndApplyTemplate "templates/default.html" postCtx
+            >>= loadAndApplyTemplate "templates/post.html"    defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
             >>= cleanIndexUrls
 
     match "picture-posts/*" $ do
-        route $ gsubRoute "picture-posts/" (const "pictures/") `composeRoutes` cleanRoute
+        route $ gsubRoute "picture-posts/" (const "pictures/") 
+                `composeRoutes` cleanRoute
+        
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
@@ -45,9 +84,9 @@ main = hakyllWith config $ do
     create ["archive.html"] $ do
         route cleanRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
+            posts <- recentFirst =<< loadAll "posts/**"
             let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
+                    listField "posts" defaultContext (return posts) `mappend`
                     constField "title" "Archives"            `mappend`
                     defaultContext
 
@@ -75,7 +114,7 @@ main = hakyllWith config $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
+            posts <- recentFirst =<< loadAll "posts/**"
             let indexCtx =
                     listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Home"                  `mappend`
@@ -114,14 +153,9 @@ cleanIndex url
                        
 
 --------------------------------------------------------------------------------
-postCtx :: Context String
-postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
-    defaultContext
-
 teaserCtx :: Context String
 teaserCtx = teaserField "teaser" "content" `mappend`
-            postCtx
+            defaultContext
 
 --------------------------------------------------------------------------------
 config :: Configuration

@@ -17,4 +17,5 @@ executable melissa-blog
   default-language:    Haskell2010
   ghc-options:         -threaded
   build-depends:       base == 4.*,
+                       filepath == 1.*,
                        hakyll == 4.7.*

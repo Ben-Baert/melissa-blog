@@ -2,6 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
+import           Data.List (isSuffixOf)
+import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
 
 --------------------------------------------------------------------------------
 
@@ -17,28 +19,31 @@ main = hakyllWith config $ do
         compile compressCssCompiler
 
     match (fromList ["about.rst", "contact.md"]) $ do
-        route   $ setExtension "html"
+        route   $ cleanRoute
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
+            >>= cleanIndexUrls
 
     match "posts/*" $ do
-        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
+        route $ gsubRoute "posts/" (const "") `composeRoutes` cleanRoute
         compile $ pandocCompiler
             >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
             >>= loadAndApplyTemplate "templates/default.html" postCtx
             >>= relativizeUrls
+            >>= cleanIndexUrls
 
     match "picture-posts/*" $ do
-        route $ gsubRoute "picture-posts/" (const "pictures/") `composeRoutes` setExtension "html"
+        route $ gsubRoute "picture-posts/" (const "pictures/") `composeRoutes` cleanRoute
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
+            >>= cleanIndexUrls
 
     create ["archive.html"] $ do
-        route idRoute
+        route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let archiveCtx =
@@ -50,9 +55,10 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
+                >>= cleanIndexUrls
 
     create ["pictures.html"] $ do
-        route idRoute
+        route cleanRoute 
         compile $ do
             pictureposts <- loadAll "picture-posts/*"
             let pictureCtx = 
@@ -64,6 +70,7 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/pictures.html" pictureCtx
                 >>= loadAndApplyTemplate "templates/default.html" pictureCtx
                 >>= relativizeUrls
+                >>= cleanIndexUrls
 
     match "index.html" $ do
         route idRoute
@@ -78,9 +85,33 @@ main = hakyllWith config $ do
                 >>= applyAsTemplate indexCtx
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls
+                >>= cleanIndexUrls
 
     match "templates/*" $ compile templateCompiler
 
+
+--------------------------------------------------------------------------------
+cleanRoute :: Routes
+cleanRoute = customRoute createIndexRoute
+  where
+      createIndexRoute ident = takeDirectory p </> takeBaseName p </> "index.html"
+                                  where p = toFilePath ident
+
+cleanIndexUrls :: Item String -> Compiler (Item String)
+cleanIndexUrls = return . fmap (withUrls cleanIndex)
+
+cleanIndexHtmls :: Item String -> Compiler (Item String)
+cleanIndexHtmls = return . fmap (replaceAll pattern replacement)
+    where
+          pattern = "/index.html"
+          replacement = const "/"
+
+cleanIndex :: String -> String
+cleanIndex url
+    | idx `isSuffixOf` url = take (length url - length idx) url
+    | otherwise            = url
+        where idx = "index.html"
+                       
 
 --------------------------------------------------------------------------------
 postCtx :: Context String

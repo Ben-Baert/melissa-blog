@@ -23,7 +23,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
 
     match "posts/*" $ do
-        route $ setExtension "html"
+        route $ gsubRoute "posts/" (const "") `composeRoutes` setExtension "html"
         compile $ pandocCompiler
             >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/post.html"    postCtx
@@ -31,7 +31,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
 
     match "picture-posts/*" $ do
-        route $ setExtension "html"
+        route $ gsubRoute "picture-posts/" (const "pictures/") `composeRoutes` setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
             >>= loadAndApplyTemplate "templates/default.html" defaultContext

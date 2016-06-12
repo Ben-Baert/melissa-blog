@@ -4,4 +4,8 @@
 - Picture albums
 - Multiple abouts
 - Search engines
-- Blog categories
+- clean blog categories lists
+    - no tag list with ',' but proper lists
+- next and previous buttons at the bottom of each post
+- social media buttons
+- post-commit hooks for deployment and automatic social media sharing

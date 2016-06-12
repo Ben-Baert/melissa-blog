@@ -6,7 +6,8 @@ import           Data.List (isSuffixOf)
 import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
 
 --------------------------------------------------------------------------------
-
+replDash :: String -> String
+replDash = map (\x -> if x == '-' then ' ' else x)
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -25,17 +26,17 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
 
-    tags <- buildTags "posts/**.md" (fromCapture "tags/*.html")
-    categories <- buildCategories "posts/**.md" (fromCapture "categories/*.html")
+    tags <- buildTags "blog/**.md" (fromCapture "tags/*.html")
+    categories <- buildCategories "blog/**.md" (fromCapture "categories/*.html")
 
     tagsRules tags $ \tag pattern -> do
-        let title = "Posts tagged " ++ tag
+        let title = "Posts tagged " ++ (replDash tag)
         route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
             let ctx = 
                     constField "title" title                        `mappend`
-                    listField "posts" defaultContext (return posts) `mappend`
+                    listField "posts" teaserCtx (return posts) `mappend`
                     defaultContext
 
             makeItem ""
@@ -45,13 +46,13 @@ main = hakyllWith config $ do
                 >>= cleanIndexUrls
 
     tagsRules categories $ \category pattern -> do
-        let title = "Posts in " ++ category
+        let title = "Posts in " ++ (replDash category)
         route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
             let ctx =
                     constField "title" title                        `mappend`
-                    listField "posts" defaultContext (return posts) `mappend`
+                    listField "posts" teaserCtx (return posts) `mappend`
                     defaultContext
 
             makeItem ""
@@ -63,7 +64,7 @@ main = hakyllWith config $ do
     albums <- buildCategories "pictures/**.md" (fromCapture "album/*.html")
 
     tagsRules albums $ \category pattern -> do
-        let title = "Pictures in " ++ category
+        let title = "Pictures in " ++ (replDash category)
         route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
@@ -78,8 +79,25 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
+    trips <- buildCategories "travel/**.md" (fromCapture "travel/*.html")
 
-    match "posts/**" $ do
+    tagsRules trips $ \trip pattern -> do
+        let title = "Trip to " ++ (replDash trip)
+        route cleanRoute
+        compile $ do
+            posts <- chronological =<< loadAll pattern
+            let ctx =
+                    constField "title" title `mappend`
+                    listField "posts" teaserCtx (return posts) `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/trip.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx
+                >>= relativizeUrls
+                >>= cleanIndexUrls
+
+    match "blog/**" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` 
                 cleanRoute
 
@@ -99,13 +117,24 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
             >>= cleanIndexUrls
+    
+    match "travel/**" $ do
+        route cleanRoute
 
-    create ["archive.html"] $ do
+        compile $ pandocCompiler
+            >>= saveSnapshot "content"
+            >>= loadAndApplyTemplate "templates/trip-report.html" (categoryCtx tags trips)
+            >>= loadAndApplyTemplate "templates/default.html" (categoryCtx tags trips)
+            >>= relativizeUrls
+            >>= cleanIndexUrls
+
+    create ["blog.html"] $ do
         route cleanRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/**"
+            posts <- (fmap (take 10)) . recentFirst =<< loadAll "blog/**"
             let archiveCtx =
-                    listField "posts" defaultContext (return posts) `mappend`
+                    field "categories" (\_ -> renderTagList categories) `mappend`
+                    listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Archives"            `mappend`
                     defaultContext
 
@@ -129,10 +158,24 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
+    create ["travel.html"] $ do
+        route cleanRoute
+        compile $ do
+            let travelCtx = 
+                    field "trips" (\_ -> renderTagList trips) `mappend`
+                    constField "title" "Trips" `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/trips.html" travelCtx
+                >>= loadAndApplyTemplate "templates/default.html" travelCtx
+                >>= relativizeUrls
+                >>= cleanIndexUrls
+
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/**"
+            posts <- recentFirst =<< loadAll "blog/**"
             let indexCtx =
                     listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Home"                  `mappend`

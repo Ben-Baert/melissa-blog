@@ -2,7 +2,10 @@
 title: Contact
 ---
 
-I live in a small hut in the mountains of Kumano Kodō on Kii Hantō and would not
-like to be contacted.
+You can send me an email at hello {AT} melissakaton {DOT} com. I will usually respond within three working days.
 
-BUT SHE DOESN'T LIKE MOUNTAINS!
+You can also follow or connect to me on these social networks:
+
+- [Twitter](https://twitter.com/melkbaert)
+- [Quora](https://www.quora.com/profile/Melissa-Baert)
+- [LinkedIn]()

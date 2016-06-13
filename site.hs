@@ -5,10 +5,16 @@ import           Hakyll
 import           Data.List (isSuffixOf, intersperse, intercalate)
 import           Text.Blaze.Html(toHtml)
 import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
-
+import           Data.Char(toUpper)
 --------------------------------------------------------------------------------
 replDash :: String -> String
 replDash = map (\x -> if x == '-' then ' ' else x)
+
+title :: String -> String
+title = unwords .  map firstUpper  . words
+    where firstUpper (x:xs) = toUpper x : xs
+
+prettyCategory = title . replDash
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -31,7 +37,7 @@ main = hakyllWith config $ do
     categories <- buildCategories "blog/**.md" (fromCapture "categories/*.html")
 
     tagsRules tags $ \tag pattern -> do
-        let title = "Posts tagged " ++ (replDash tag)
+        let title = "Posts tagged " ++ (prettyCategory tag)
         route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
@@ -47,7 +53,7 @@ main = hakyllWith config $ do
                 >>= cleanIndexUrls
 
     tagsRules categories $ \category pattern -> do
-        let title = "Posts in " ++ (replDash category)
+        let title = "Posts in " ++ (prettyCategory category)
         route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
@@ -65,7 +71,7 @@ main = hakyllWith config $ do
     albums <- buildCategories "pictures/**.md" (fromCapture "album/*.html")
 
     tagsRules albums $ \category pattern -> do
-        let title = "Pictures in " ++ (replDash category)
+        let title = "Pictures in " ++ (prettyCategory category)
         route cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
@@ -83,7 +89,7 @@ main = hakyllWith config $ do
     trips <- buildCategories "travel/**.md" (fromCapture "travel/*.html")
 
     tagsRules trips $ \trip pattern -> do
-        let title = "Trip to " ++ (replDash trip)
+        let title = "Trip to " ++ (prettyCategory trip)
         route cleanRoute
         compile $ do
             posts <- chronological =<< loadAll pattern
@@ -164,7 +170,7 @@ main = hakyllWith config $ do
         compile $ do
             let travelCtx = 
                     field "trips" (\_ -> renderTagList trips) `mappend`
-                    constField "title" "Trips" `mappend`
+                    constField "title" "Trips"                `mappend`
                     defaultContext
 
             makeItem ""
@@ -176,10 +182,10 @@ main = hakyllWith config $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "*/**.md"
+            posts <- (fmap (take 10)) . recentFirst =<< loadAll "*/**.md"
             let indexCtx =
                     listField "posts" (categoryCtx tags categories) (return posts) `mappend`
-                    constField "title" "Home"                  `mappend`
+                    constField "title" "Home"                                      `mappend`
                     defaultContext
 
             getResourceBody
@@ -224,7 +230,7 @@ categoryField' :: String -> Tags -> Context a
 categoryField' = 
             tagsFieldWith getCategory render (mconcat . intersperse ", ")
                 where 
-                    render tag _ = Just $ toHtml $ replDash tag
+                    render tag _ = Just $ toHtml $ prettyCategory tag
                     getCategory = return . return . takeBaseName . takeDirectory . toFilePath
 
 categoryCtx :: Tags -> Tags -> Context String

@@ -6,6 +6,7 @@ import           Data.List (isSuffixOf, intersperse, intercalate)
 import           Text.Blaze.Html(toHtml)
 import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
 import           Data.Char(toUpper)
+import qualified Data.Map as Map
 --------------------------------------------------------------------------------
 replDash :: String -> String
 replDash = map (\x -> if x == '-' then ' ' else x)
@@ -14,8 +15,25 @@ title :: String -> String
 title = unwords .  map firstUpper  . words
     where firstUpper (x:xs) = toUpper x : xs
 
+prettyCategory :: String -> String
 prettyCategory = title . replDash
 
+--------------------------------------------------------------------------------
+
+metadataFieldIs :: String -> String -> Metadata -> Bool
+metadataFieldIs key value metadata = case Map.lookup key metadata of
+                                        Just v  -> value == v
+                                        Nothing -> True
+
+
+isPublic :: Metadata -> Bool
+isPublic = metadataFieldIs "draft" "false"
+
+
+match' :: Pattern -> Rules () -> Rules ()
+match' pattern = matchMetadata pattern isPublic
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = hakyllWith config $ do
     match "images/*" $ do
@@ -104,7 +122,7 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
-    match "blog/**" $ do
+    match' "blog/**" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` 
                 cleanRoute
 
@@ -115,7 +133,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
 
-    match "pictures/**" $ do
+    match' "pictures/**" $ do
         route $ cleanRoute 
                 
         
@@ -125,7 +143,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
     
-    match "travel/**" $ do
+    match' "travel/**" $ do
         route cleanRoute
 
         compile $ pandocCompiler

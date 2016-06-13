@@ -19,4 +19,5 @@ executable melissa-blog
   build-depends:       base == 4.*,
                        filepath == 1.*,
                        hakyll == 4.7.*,
-                       blaze-html == 0.8.*
+                       blaze-html == 0.8.*,
+                       containers == 0.5.*

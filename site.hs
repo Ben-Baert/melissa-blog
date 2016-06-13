@@ -2,7 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
-import           Data.List (isSuffixOf)
+import           Data.List (isSuffixOf, intersperse, intercalate)
+import           Text.Blaze.Html(toHtml)
 import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
 
 --------------------------------------------------------------------------------
@@ -177,7 +178,7 @@ main = hakyllWith config $ do
         compile $ do
             posts <- recentFirst =<< loadAll "*/**.md"
             let indexCtx =
-                    listField "posts" teaserCtx (return posts) `mappend`
+                    listField "posts" (categoryCtx tags categories) (return posts) `mappend`
                     constField "title" "Home"                  `mappend`
                     defaultContext
 
@@ -219,9 +220,16 @@ teaserCtx =
         teaserField "teaser" "content" `mappend`
         defaultContext
 
+categoryField' :: String -> Tags -> Context a
+categoryField' = 
+            tagsFieldWith getCategory render (mconcat . intersperse ", ")
+                where 
+                    render tag _ = Just $ toHtml $ replDash tag
+                    getCategory = return . return . takeBaseName . takeDirectory . toFilePath
+
 categoryCtx :: Tags -> Tags -> Context String
 categoryCtx tags category =
-        categoryField "category" category `mappend`
+        categoryField' "category" category `mappend`
         tagsField     "tags"     tags     `mappend`
         teaserCtx
 

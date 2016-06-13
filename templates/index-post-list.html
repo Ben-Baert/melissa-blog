@@ -1,0 +1,11 @@
+<ul>
+    $for(posts)$
+        $if(teaser)$
+        <h3>$if(category)$$category$: $endif$$title$ <small>$date$</small></h3>
+            <p>$teaser$</<p>
+            <a href="$url$">Read more</a>
+        $else$
+        <a href="$url$"><h3>$title$ <small>$date$</small></h3></a>
+        $endif$        
+    $endfor$
+</ul>

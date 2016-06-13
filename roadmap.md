@@ -1,10 +1,12 @@
-- Drafts
+- Add category as context to overview on homepage
+- Breadcrumbs
+- Drafts (as metadata)
 - SEO
     - Canonicals
 - New template (bootstrap)
 - Picture albums
-- Multiple abouts
-- Search engines
+- Multiple abouts (overview, cv, favourite books, etc.)
+- Search
 - clean blog categories lists
     - no tag list with ',' but proper lists
 - next and previous buttons at the bottom of each post

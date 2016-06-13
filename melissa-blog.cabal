@@ -18,4 +18,5 @@ executable melissa-blog
   ghc-options:         -threaded
   build-depends:       base == 4.*,
                        filepath == 1.*,
-                       hakyll == 4.7.*
+                       hakyll == 4.7.*,
+                       blaze-html == 0.8.*

@@ -1,4 +1,5 @@
 x- Add category as context to overview on homepage
+- next and previous buttons at the bottom of each post
 - Breadcrumbs
 x- Drafts (as metadata)
 - Edits (jQuery plugin; send suggested edits via email to hello+edits@melissakaton.com)
@@ -11,6 +12,5 @@ x- Drafts (as metadata)
 - Search
 - clean blog categories lists
     - no tag list with ',' but proper lists
-- next and previous buttons at the bottom of each post
 - social media buttons
 - post-commit hooks for deployment and automatic social media sharing after each new post

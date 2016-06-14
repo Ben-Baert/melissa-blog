@@ -1,6 +1,8 @@
-- Add category as context to overview on homepage
+x- Add category as context to overview on homepage
 - Breadcrumbs
-- Drafts (as metadata)
+x- Drafts (as metadata)
+- Edits (jQuery plugin; send suggested edits via email to hello+edits@melissakaton.com)
+    - http://www.appelsiini.net/projects/jeditable
 - SEO
     - Canonicals
 - New template (bootstrap)

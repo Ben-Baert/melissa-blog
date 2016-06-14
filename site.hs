@@ -3,11 +3,15 @@
 import           Data.Monoid (mappend)
 import           Hakyll
 import           Data.List (isSuffixOf, intersperse, intercalate)
-import           Text.Blaze.Html(toHtml)
 import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
+import           Text.Blaze.Html                 (toHtml, toValue, (!))
+import           Text.Blaze.Html.Renderer.String (renderHtml)
+import qualified Text.Blaze.Html5                as H
+import qualified Text.Blaze.Html5.Attributes     as A
 import           Data.Char(toUpper)
 import qualified Data.Map as Map
 --------------------------------------------------------------------------------
+
 replDash :: String -> String
 replDash = map (\x -> if x == '-' then ' ' else x)
 
@@ -17,7 +21,6 @@ title = unwords .  map firstUpper  . words
 
 prettyCategory :: String -> String
 prettyCategory = title . replDash
-
 --------------------------------------------------------------------------------
 
 metadataFieldIs :: String -> String -> Metadata -> Bool
@@ -32,8 +35,9 @@ isPublic = metadataFieldIs "draft" "false"
 
 match' :: Pattern -> Rules () -> Rules ()
 match' pattern = matchMetadata pattern isPublic
-
 --------------------------------------------------------------------------------
+
+
 main :: IO ()
 main = hakyllWith config $ do
     match "images/*" $ do
@@ -242,7 +246,7 @@ cleanIndex url
 teaserCtx :: Context String
 teaserCtx = 
         teaserField "teaser" "content" `mappend`
-        defaultContext
+        defaultContext'
 
 categoryField' :: String -> Tags -> Context a
 categoryField' = 
@@ -251,11 +255,30 @@ categoryField' =
                     render tag _ = Just $ toHtml $ prettyCategory tag
                     getCategory = return . return . takeBaseName . takeDirectory . toFilePath
 
+
+crumbs :: FilePath -> [H.Html]
+crumbs "/" = []
+crumbs "." = []
+crumbs fp = (H.a ! A.href (toValue fp) $ toHtml $ prettyCategory $ takeBaseName fp) : (crumbs (takeDirectory fp))
+
+completeCrumbs crumbs =
+                mconcat $ (intersperse (toHtml (" > " :: String) )) $ homeLink : (reverse crumbs)
+                    where homeLink = H.a ! (A.href (toValue ("/" :: String))) $ toHtml ("Home" :: String) 
+
+
+breadCrumbField :: String -> Context a
+breadCrumbField key = field key $ return . renderHtml . completeCrumbs . crumbs . toFilePath . itemIdentifier
+
 categoryCtx :: Tags -> Tags -> Context String
 categoryCtx tags category =
         categoryField' "category" category `mappend`
         tagsField     "tags"     tags     `mappend`
         teaserCtx
+
+defaultContext' :: Context String
+defaultContext' = 
+            breadCrumbField "breadcrumbs" `mappend`
+            defaultContext
 
 --------------------------------------------------------------------------------
 config :: Configuration

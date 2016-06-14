@@ -2,6 +2,7 @@
 module Main
     ( main
     ) where
+import           Data.Maybe (fromMaybe)
 import           Hakyll hiding (match)
 --------------------------------------------------------------------------------
 
@@ -89,6 +90,7 @@ main = hakyllWith config $ do
         route cleanRoute
         compile $ do
             posts <- chronological =<< loadAll pattern
+            -- firstDay <- head posts
             let ctx =
                     constField "title" title `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`

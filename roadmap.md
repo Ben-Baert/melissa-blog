@@ -1,8 +1,11 @@
 x- Add category as context to overview on homepage
+- travel overview
 - next and previous buttons at the bottom of each post to the next and previous post IN THE SAME CATEGORY
-- Breadcrumbs
+- related content
+- nested (picture) categories
+x- Breadcrumbs
 x- Drafts (as metadata)
-- Reviews
+- Reviews (templates!)
     - Books
     - Movies
     - MOOCS

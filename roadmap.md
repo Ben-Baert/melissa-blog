@@ -1,7 +1,15 @@
 x- Add category as context to overview on homepage
-- next and previous buttons at the bottom of each post
+- next and previous buttons at the bottom of each post to the next and previous post IN THE SAME CATEGORY
 - Breadcrumbs
 x- Drafts (as metadata)
+- Reviews
+    - Books
+    - Movies
+    - MOOCS
+    - Open University Courses
+    - Museums
+    - Cities
+- RSS-feeds
 - Edits (jQuery plugin; send suggested edits via email to hello+edits@melissakaton.com)
     - http://www.appelsiini.net/projects/jeditable
 - SEO

@@ -1,10 +1,10 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
+module Main
+    ( main
+    ) where
 import           Hakyll hiding (match)
 --------------------------------------------------------------------------------
 
-import           Breadcrumbs
 import           CleanRoutes
 import           Config
 import           Context

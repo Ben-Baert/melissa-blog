@@ -13,9 +13,10 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 executable melissa-blog
-  main-is:             site.hs
+  main-is:             Main.hs
   default-language:    Haskell2010
-  ghc-options:         -threaded
+  Hs-source-dirs:      src
+  ghc-options:         -threaded -Wall
   build-depends:       base == 4.*,
                        filepath == 1.*,
                        hakyll == 4.7.*,

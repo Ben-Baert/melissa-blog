@@ -1,8 +1,15 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
-import           Hakyll
-import           Custom
+import           Hakyll hiding (match)
+--------------------------------------------------------------------------------
+
+import           Breadcrumbs
+import           CleanRoutes
+import           Config
+import           Context
+import           Match
+import           PrettyCategory
 --------------------------------------------------------------------------------
 
 main :: IO ()
@@ -93,7 +100,7 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
-    match' "blog/**" $ do
+    match "blog/**" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` 
                 cleanRoute
 
@@ -104,7 +111,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
 
-    match' "pictures/**" $ do
+    match "pictures/**" $ do
         route $ cleanRoute 
                 
         
@@ -114,7 +121,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
     
-    match' "travel/**" $ do
+    match "travel/**" $ do
         route cleanRoute
 
         compile $ pandocCompiler
@@ -184,4 +191,5 @@ main = hakyllWith config $ do
                 >>= cleanIndexUrls
 
     match "templates/*" $ compile templateCompiler
+
 

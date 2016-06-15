@@ -11,6 +11,7 @@ import           Config
 import           Context
 import           Match
 import           PrettyCategory
+import           RelatedPosts
 --------------------------------------------------------------------------------
 
 main :: IO ()
@@ -106,15 +107,19 @@ main = hakyllWith config $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` 
                 cleanRoute
 
-        compile $ pandocCompiler
-            >>= saveSnapshot "content"
-            >>= loadAndApplyTemplate "templates/post.html"    (categoryCtx tags categories) 
-            >>= loadAndApplyTemplate "templates/default.html" (categoryCtx tags categories) 
-            >>= relativizeUrls
-            >>= cleanIndexUrls
+        compile $ do
+            let ctx = 
+                    previousPostField "previousPost" `mappend`
+                    categoryCtx tags categories
+            pandocCompiler
+                >>= saveSnapshot "content"
+                >>= loadAndApplyTemplate "templates/post.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx 
+                >>= relativizeUrls
+                >>= cleanIndexUrls
 
     match "pictures/**" $ do
-        route $ cleanRoute 
+        route cleanRoute 
                 
         
         compile $ pandocCompiler

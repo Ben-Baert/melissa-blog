@@ -1,8 +1,19 @@
 x- Add category as context to overview on homepage
 - travel overview
+    - map of location
+    - first day - last day - duration
+    - related articles
+        - review of city
+        - review of museums
+        - some pictures
+   - links to day-to-day reports
 - next and previous buttons at the bottom of each post to the next and previous post IN THE SAME CATEGORY
-- related content
+- related content (you might also be interested in ...)
 - nested (picture) categories
+- automatically add affiliate links in case they were forgotten
+   - Amazon
+   - Bol.com
+- pagination
 x- Breadcrumbs
 x- Drafts (as metadata)
 - Reviews (templates!)
@@ -12,6 +23,8 @@ x- Drafts (as metadata)
     - Open University Courses
     - Museums
     - Cities
+- table of contents
+    - TOC on left, article on right
 - RSS-feeds
 - Edits (jQuery plugin; send suggested edits via email to hello+edits@melissakaton.com)
     - http://www.appelsiini.net/projects/jeditable
@@ -19,6 +32,8 @@ x- Drafts (as metadata)
     - Canonicals
 - New template (bootstrap)
 - Picture albums
+    - Thumbnail picture in overview with text overlay
+    - Picture as album (previous / next)
 - Multiple abouts (overview, cv, favourite books, etc.)
 - Search
 - clean blog categories lists

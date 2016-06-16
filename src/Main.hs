@@ -110,6 +110,7 @@ main = hakyllWith config $ do
         compile $ do
             let ctx = 
                     previousPostField "previousPost" `mappend`
+                    nextPostField "nextPost" `mappend`
                     categoryCtx tags categories
             pandocCompiler
                 >>= saveSnapshot "content"
@@ -124,6 +125,7 @@ main = hakyllWith config $ do
         
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
+            >>= saveSnapshot "content"
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
             >>= cleanIndexUrls
@@ -185,7 +187,7 @@ main = hakyllWith config $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- (fmap (take 10)) . recentFirst =<< loadAll "*/**.md"
+            posts <- (fmap (take 10)) . recentFirst =<< loadAll ("blog/**.md" .||. "travel/**.md")
             let indexCtx =
                     listField "posts" (categoryCtx tags categories) (return posts) `mappend`
                     constField "title" "Home"                                      `mappend`
@@ -198,5 +200,13 @@ main = hakyllWith config $ do
                 >>= cleanIndexUrls
 
     match "templates/*" $ compile templateCompiler
+
+    create ["atom.xml"] $ do
+        route idRoute
+        compile $ do
+            let feedCtx = defaultCtx `mappend` bodyField "description"
+            posts <- fmap (take 10) . recentFirst =<<
+                    loadAllSnapshots ("blog/**.md" .||. "travel/**.md" ) "content"
+            renderAtom myFeedConfiguration feedCtx posts
 
 

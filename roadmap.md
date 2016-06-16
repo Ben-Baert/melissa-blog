@@ -8,7 +8,13 @@ x- Add category as context to overview on homepage
         - some pictures
    - links to day-to-day reports
 - next and previous buttons at the bottom of each post to the next and previous post IN THE SAME CATEGORY
+    - fix next
+    - Add title to button
 - related content (you might also be interested in ...)
+    - look at tags
+- list of days in all day articles in travel on the left
+    - maybe series parameter to generalise this, so that it can be used everywhere
+        - e.g. series: trip-to-malaga; episode: 1
 - nested (picture) categories
 - automatically add affiliate links in case they were forgotten
    - Amazon
@@ -16,7 +22,7 @@ x- Add category as context to overview on homepage
 - pagination
 x- Breadcrumbs
 x- Drafts (as metadata)
-- Reviews (templates!)
+- Reviews (templates!) (star rating from metadata; links to Amazon, Bol,...)
     - Books
     - Movies
     - MOOCS

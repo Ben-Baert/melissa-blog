@@ -1,7 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Config where
 
-import Hakyll (Configuration, defaultConfiguration, deployCommand)
+import Hakyll 
+
+myFeedConfiguration :: FeedConfiguration
+myFeedConfiguration = FeedConfiguration
+    { feedTitle       = "Melissa's blog"
+    , feedDescription = "This feed provides all content from all categories from Melissa's blog"
+    , feedAuthorName  = "Melissa Jade Katon"
+    , feedAuthorEmail = "hello@melissakaton.com"
+    , feedRoot        = "http://www.melissakaton.com"
+    }
 
 
 config :: Configuration

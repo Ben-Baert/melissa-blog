@@ -4,18 +4,14 @@ module RelatedPosts
       nextPostField,
       relatedPostsField
     ) where
-import Hakyll
-import System.FilePath(takeDirectory)
-import Control.Applicative ((<$>))
+import           Control.Applicative           (Alternative (..))
+import           Hakyll
+import           System.FilePath               (takeDirectory, dropExtension)
+import           Control.Applicative           ((<$>))
+import           Data.Maybe                    (fromMaybe, fromJust)
 
-
-sameCategory :: FilePath -> FilePath -> Bool
-sameCategory x y = takeDirectory x == takeDirectory y
-
---find posts in same category, select previous and next
 previousPostField :: String -> Context String 
 previousPostField key = field key previousPost
-
 
 nextPostField :: String -> Context String
 nextPostField key = field key nextPost
@@ -23,20 +19,27 @@ nextPostField key = field key nextPost
 toPattern :: Item String -> Pattern
 toPattern =  fromGlob . (++ "/**") . takeDirectory . toFilePath . itemIdentifier
 
-previousPost :: Item String -> Compiler String
-previousPost post = do
+nPost :: Item String -> ([Identifier] -> Identifier -> Maybe Identifier) -> Compiler String
+nPost post sf = do
     sameCategoryPosts <- sortChronological =<< getMatches =<< return (toPattern post)
-    let pp = itemBefore sameCategoryPosts (itemIdentifier post)
-        in case pp of
-            Just x -> loadBody x
-            Nothing -> return("?") 
+    let pp = sf sameCategoryPosts (itemIdentifier post)
+        in case pp of  
+            Just x -> return ('/' : (dropExtension $ toFilePath x))
+            Nothing -> empty 
+
+previousPost :: Item String -> Compiler String
+previousPost post = nPost post itemBefore
 
 nextPost :: Item String -> Compiler String
-nextPost = undefined
+nextPost post = nPost post itemAfter
 
 itemBefore :: Eq a => [a] -> a -> Maybe a
 itemBefore xs x =
     lookup x $ zip (tail xs) xs
+
+itemAfter :: Eq a => [a] -> a -> Maybe a
+itemAfter xs x =
+    lookup x $ zip xs (tail xs)
 
 relatedPostsField :: String -> Context a
 relatedPostsField = undefined

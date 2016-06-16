@@ -15,4 +15,10 @@
 </div>
 
 $body$
-$previousPost$
+$if(previousPost)$
+<a href="$previousPost$">Previous post</a>
+$endif$
+
+$if(nextPost)$
+<a href="$nextPost$">Next post</a>
+$endif$

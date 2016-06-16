@@ -17,7 +17,7 @@ crumbs :: FilePath -> [H.Html]
 crumbs "/" = []
 crumbs "." = []
 -- full url/actual url; get rid of full url
-crumbs fp = (H.a ! A.href (toValue ("/" ++fp)) $ toHtml $ prettyCategory $ takeBaseName fp) : (crumbs (takeDirectory fp))
+crumbs fp = (H.a ! A.href (toValue ("/" ++ fp)) $ toHtml $ prettyCategory $ takeBaseName fp) : (crumbs (takeDirectory fp))
 
 completeCrumbs :: [H.Html] -> H.Html
 completeCrumbs crumbs =

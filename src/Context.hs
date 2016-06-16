@@ -11,6 +11,9 @@ import           Breadcrumbs                     (breadCrumbField)
 import           Data.Monoid                     (mappend, mconcat)
 import           Text.Blaze.Html.Renderer.String (renderHtml)
 import           Data.List                       (intersperse)
+import           Text.Blaze.Html                 (toHtml, toValue, (!))
+import qualified Text.Blaze.Html5                as H
+import qualified Text.Blaze.Html5.Attributes     as A
 import           System.FilePath.Posix           (takeBaseName, takeDirectory)
 import           Text.Blaze.Html                 (toHtml)
 import           Data.Maybe                      (fromMaybe)
@@ -20,7 +23,9 @@ import qualified Data.Map                        as M
 authorField :: Context a 
 authorField = field "author" $ \item -> do 
     metadata <- getMetadata (itemIdentifier item)
-    return $ fromMaybe "Melissa Katon" $  M.lookup "authors" metadata
+    text <- return $ fromMaybe "Melissa Katon" $  M.lookup "authors" metadata
+    let path = "/author/" ++ text
+        in return $ renderHtml $ H.a ! A.href (toValue path) $ toHtml $ prettyCategory $ text 
 
 teaserCtx :: Context String
 teaserCtx = 

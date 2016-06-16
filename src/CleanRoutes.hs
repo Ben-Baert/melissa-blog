@@ -9,10 +9,13 @@ import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, spli
 import           Hakyll (Routes, customRoute, Item, Compiler, replaceAll, toFilePath, withUrls)
 --------------------------------------------------------------------------------
 
+replSpaces :: String -> String
+replSpaces = map (\x -> if x == ' ' then '-' else x)
+
 cleanRoute :: Routes
 cleanRoute = customRoute createIndexRoute
   where
-      createIndexRoute ident = takeDirectory p </> takeBaseName p </> "index.html"
+      createIndexRoute ident = replSpaces $ takeDirectory p </> takeBaseName p </> "index.html"
                                   where p = toFilePath ident
 
 cleanIndexUrls :: Item String -> Compiler (Item String)

@@ -40,7 +40,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
 
-    authors <- buildTagsWith getAuthors postPattern (fromCapture "authors/*.html")
+    authors <- buildTagsWith getAuthors postPattern (fromCapture "author/*.html")
 
     tagsRules authors $ \author pattern -> do
         let title = "Posts written by " ++ author

@@ -1,6 +1,8 @@
 x- Add category as context to overview on homepage
 - travel overview
     - map of location
+        - in case of citytrip, simply 1 marker on map
+        - in case of roadtrip, markers that outline the trip
     - first day - last day - duration
     - related articles
         - review of city
@@ -20,6 +22,8 @@ x- Add category as context to overview on homepage
    - Amazon
    - Bol.com
 - pagination
+- author page
+- add watermark on images before generation
 x- Breadcrumbs
 x- Drafts (as metadata)
 - Reviews (templates!) (star rating from metadata; links to Amazon, Bol,...)

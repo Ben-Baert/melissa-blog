@@ -26,6 +26,9 @@ nPost post sf = do
         in case pp of  
             Just x -> return ('/' : (dropExtension $ toFilePath x))
             Nothing -> empty 
+        --where 
+          --  path = ('/' : (dropExtension $ toFilePath x))
+           -- title = getMetadataField' x "title"
 
 previousPost :: Item String -> Compiler String
 previousPost post = nPost post itemBefore

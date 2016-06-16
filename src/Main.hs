@@ -4,6 +4,7 @@ module Main
     ) where
 import           Data.Maybe (fromMaybe)
 import           Hakyll hiding (match)
+import qualified Data.Map as M
 --------------------------------------------------------------------------------
 
 import           CleanRoutes
@@ -13,6 +14,14 @@ import           Match
 import           PrettyCategory
 import           RelatedPosts
 --------------------------------------------------------------------------------
+
+getAuthors :: MonadMetadata m => Identifier -> m [String]
+getAuthors identifier = do
+    metadata <- getMetadata identifier
+    return $ fromMaybe ["Melissa Katon"] $ (map trim . splitAll ",") `fmap` M.lookup "authors" metadata
+
+postPattern :: Pattern
+postPattern = "blog/**.md" .||. "travel/**.md" 
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -30,6 +39,23 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
             >>= cleanIndexUrls
+
+    authors <- buildTagsWith getAuthors postPattern (fromCapture "authors/*.html")
+
+    tagsRules authors $ \author pattern -> do
+        let title = "Posts written by " ++ author
+        route cleanRoute
+        compile $ do
+            posts <- recentFirst =<< loadAll pattern
+            let ctx =
+                    constField "title" title `mappend`
+                    listField "posts" teaserCtx (return posts) `mappend`
+                    defaultContext
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/tag.html" ctx
+                >>= loadAndApplyTemplate "templates/default.html" ctx
+                >>= relativizeUrls
+                >>= cleanIndexUrls
 
     tags <- buildTags "blog/**.md" (fromCapture "tags/*.html")
     categories <- buildCategories "blog/**.md" (fromCapture "categories/*.html")

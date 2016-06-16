@@ -7,6 +7,8 @@ module PrettyCategory
 
 import           Data.Char(toUpper)
 --------------------------------------------------------------------------------
+replSpaces :: String -> String
+replSpaces = map (\x -> if x == ' ' then '-' else x)
 
 replDash :: String -> String
 replDash = map (\x -> if x == '-' then ' ' else x)

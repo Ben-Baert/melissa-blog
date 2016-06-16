@@ -16,12 +16,12 @@ previousPostField key = field key previousPost
 nextPostField :: String -> Context String
 nextPostField key = field key nextPost
 
-toPattern :: Item String -> Pattern
-toPattern =  fromGlob . (++ "/**") . takeDirectory . toFilePath . itemIdentifier
+sameCategoryPattern :: Item String -> Pattern
+sameCategoryPattern =  fromGlob . (++ "/**") . takeDirectory . toFilePath . itemIdentifier
 
 nPost :: Item String -> ([Identifier] -> Identifier -> Maybe Identifier) -> Compiler String
 nPost post sf = do
-    sameCategoryPosts <- sortChronological =<< getMatches =<< return (toPattern post)
+    sameCategoryPosts <- sortChronological =<< getMatches =<< return (sameCategoryPattern post)
     let pp = sf sameCategoryPosts (itemIdentifier post)
         in case pp of  
             Just x -> return ('/' : (dropExtension $ toFilePath x))

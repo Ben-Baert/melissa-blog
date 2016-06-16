@@ -32,6 +32,8 @@ x- Drafts (as metadata)
 - table of contents
     - TOC on left, article on right
 - RSS-feeds
+    -x overall feed
+    - topic feeds (automatic)
 - Edits (jQuery plugin; send suggested edits via email to hello+edits@melissakaton.com)
     - http://www.appelsiini.net/projects/jeditable
 - SEO

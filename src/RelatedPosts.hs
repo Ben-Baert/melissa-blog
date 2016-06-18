@@ -14,6 +14,8 @@ import           System.FilePath               (takeDirectory, dropExtension)
 import           Control.Applicative           ((<$>))
 import           Data.Maybe                    (fromMaybe, fromJust)
 import           Control.Monad                 (join)
+import           Data.List                     (intersect, sortBy)
+import           Data.Ord                      (comparing)
 
 previousPostField :: String -> Context String 
 previousPostField key = field key previousPost
@@ -55,5 +57,11 @@ itemAfter xs x =
     lookup x $ zip xs (tail xs)
 
 relatedPostsField :: String -> Context a
-relatedPostsField = undefined
+relatedPostsField post = undefined
 
+--relatedPosts :: Item String -> Int -> Compiler [String]
+--relatedPosts post nrOfPosts = do
+--    ownTags <- getTags $ itemIdentifier post
+--    sameCategoryPosts <- getMatches =<< return (sameCategoryPattern post)
+--    return $ take nrOfPosts $ sortBy (comparing length . intersect ownTags . getTags) sameCategoryPosts 
+--

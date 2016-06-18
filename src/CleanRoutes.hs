@@ -1,21 +1,23 @@
 {-# LANGUAGE OverloadedStrings #-}
 module CleanRoutes 
     ( cleanRoute,
-      cleanIndexUrls
+      cleanIndexUrls,
+      toUrlString
     ) where
 
+import           Data.Char (toLower)
 import           Data.List (isSuffixOf, intersperse, intercalate)
 import           System.FilePath.Posix ((</>), takeBaseName, takeDirectory, splitFileName)
 import           Hakyll (Routes, customRoute, Item, Compiler, replaceAll, toFilePath, withUrls)
 --------------------------------------------------------------------------------
 
-replSpaces :: String -> String
-replSpaces = map (\x -> if x == ' ' then '-' else x)
+toUrlString :: String -> String
+toUrlString = map (toLower . \x -> if x == ' ' then '-' else x)
 
 cleanRoute :: Routes
-cleanRoute = customRoute createIndexRoute
+cleanRoute = customRoute $ toUrlString . createIndexRoute
   where
-      createIndexRoute ident = replSpaces $ takeDirectory p </> takeBaseName p </> "index.html"
+      createIndexRoute ident = takeDirectory p </> takeBaseName p </> "index.html"
                                   where p = toFilePath ident
 
 cleanIndexUrls :: Item String -> Compiler (Item String)

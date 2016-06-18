@@ -8,4 +8,4 @@ Something something
 
 <div></div><!--more-->
 
-More of something
+More of something.

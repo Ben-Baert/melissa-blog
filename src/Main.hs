@@ -21,7 +21,7 @@ getAuthors identifier = do
     return $ fromMaybe ["Melissa Katon"] $ (map trim . splitAll ",") `fmap` M.lookup "authors" metadata
 
 postPattern :: Pattern
-postPattern = "blog/**.md" .||. "travel/**.md" 
+postPattern = "blog/**.md" .||. "travel/*/day-*.md" 
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -110,24 +110,29 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
-    trips <- buildCategories "travel/**.md" (fromCapture "travel/*.html")
+    trips <- buildCategories "travel/*/day-*.md" (fromCapture "travel/*.html")
 
     tagsRules trips $ \trip pattern -> do
         let title = "Trip to " ++ (prettyCategory trip)
+        let metaIdent = fromFilePath $ "travel/" ++ trip ++ "/meta.md"
+        from <- getMetadataField' metaIdent "from"
         route cleanRoute
         compile $ do
             posts <- chronological =<< loadAll pattern
-            -- firstDay <- head posts
             let ctx =
                     constField "title" title `mappend`
+                    constField "from" from `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
                     defaultContext
 
             makeItem ""
-                >>= loadAndApplyTemplate "templates/trip.html" ctx
+                >>= loadAndApplyTemplate "templates/travel-overview.html" ctx
                 >>= loadAndApplyTemplate "templates/default.html" ctx
                 >>= relativizeUrls
                 >>= cleanIndexUrls
+    
+    match "travel/*/meta.md" $ do
+        compile pandocCompiler
 
     match "blog/**" $ do
         route $ gsubRoute "posts/" (const "") `composeRoutes` 
@@ -156,7 +161,7 @@ main = hakyllWith config $ do
             >>= relativizeUrls
             >>= cleanIndexUrls
     
-    match "travel/**" $ do
+    match "travel/*/day-*.md" $ do
         route cleanRoute
 
         compile $ pandocCompiler
@@ -199,8 +204,9 @@ main = hakyllWith config $ do
     create ["travel.html"] $ do
         route cleanRoute
         compile $ do
+            tripOverviews <- recentFirst =<< loadAll "travel/*/meta.md" 
             let travelCtx = 
-                    field "trips" (\_ -> renderTagList trips) `mappend`
+                    listField "trips" defaultContext (return tripOverviews) `mappend`
                     constField "title" "Trips"                `mappend`
                     defaultContext
 
@@ -213,7 +219,7 @@ main = hakyllWith config $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            posts <- (fmap (take 10)) . recentFirst =<< loadAll ("blog/**.md" .||. "travel/**.md")
+            posts <- (fmap (take 10)) . recentFirst =<< loadAll postPattern
             let indexCtx =
                     listField "posts" (categoryCtx tags categories) (return posts) `mappend`
                     constField "title" "Home"                                      `mappend`
@@ -232,7 +238,7 @@ main = hakyllWith config $ do
         compile $ do
             let feedCtx = defaultCtx `mappend` bodyField "description"
             posts <- fmap (take 10) . recentFirst =<<
-                    loadAllSnapshots ("blog/**.md" .||. "travel/**.md" ) "content"
+                    loadAllSnapshots postPattern "content"
             renderAtom myFeedConfiguration feedCtx posts
 
 

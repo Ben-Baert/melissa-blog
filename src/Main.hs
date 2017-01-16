@@ -2,9 +2,7 @@
 module Main
     ( main
     ) where
-import           Data.Maybe (fromMaybe)
-import           Hakyll hiding (match)
-import qualified Data.Map as M
+import           Hakyll     hiding      (match)
 --------------------------------------------------------------------------------
 
 import           CleanRoutes
@@ -13,19 +11,12 @@ import           Context
 import           Match
 import           PrettyCategory
 import           RelatedPosts
+import           Utils
 --------------------------------------------------------------------------------
-
-getAuthors :: MonadMetadata m => Identifier -> m [String]
-getAuthors identifier = do
-    metadata <- getMetadata identifier
-    return $ fromMaybe ["Melissa Katon"] $ (map trim . splitAll ",") `fmap` M.lookup "authors" metadata
-
-postPattern :: Pattern
-postPattern = "blog/**.md" .||. "travel/*/day-*.md" 
 
 main :: IO ()
 main = hakyllWith config $ do
-    match "images/*" $ do
+    match "pictures/*" $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -92,7 +83,8 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
-    albums <- buildCategories "pictures/**.md" (fromCapture "album/*.html")
+
+    albums <- buildCategories "pictures/**" (fromCapture "album/*.html")
 
     tagsRules albums $ \category pattern -> do
         let title = "Pictures in " ++ (prettyCategory category)
@@ -114,14 +106,14 @@ main = hakyllWith config $ do
 
     tagsRules trips $ \trip pattern -> do
         let title = "Trip to " ++ (prettyCategory trip)
-        let metaIdent = fromFilePath $ "travel/" ++ trip ++ "/meta.md"
-        from <- getMetadataField' metaIdent "from"
+        let metaIdent = fromFilePath $ "travel/" ++ trip ++ "/metadata.yml"
+        departureDate <- getMetadataField' metaIdent "departure-date"
         route cleanRoute
         compile $ do
             posts <- chronological =<< loadAll pattern
             let ctx =
                     constField "title" title `mappend`
-                    constField "from" from `mappend`
+                    constField "departureDate" departureDate `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
                     defaultContext
 
@@ -230,6 +222,11 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls
                 >>= cleanIndexUrls
+    
+    match "404.html" $ do
+        route idRoute
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/default.html" defaultCtx
 
     match "templates/*" $ compile templateCompiler
 

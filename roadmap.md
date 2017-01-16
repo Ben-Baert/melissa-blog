@@ -1,4 +1,7 @@
 x- Add category as context to overview on homepage
+- 404
+- emailobfuscation (pandocWriterOptions)
+- yaml instead of md for meta files
 - travel overview
     - map of location
         - in case of citytrip, simply 1 marker on map

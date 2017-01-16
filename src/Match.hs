@@ -3,12 +3,11 @@ module Match
     ( match
     ) where
 
-import Hakyll (Metadata, Pattern, Rules, matchMetadata) 
-import qualified Data.Map as Map
+import Hakyll (Metadata, Pattern, Rules, matchMetadata, lookupString) 
 
 
 metadataFieldIs :: String -> String -> Metadata -> Bool
-metadataFieldIs key value metadata = case Map.lookup key metadata of
+metadataFieldIs key value metadata = case lookupString key metadata of
                                         Just v  -> value == v
                                         Nothing -> True
 

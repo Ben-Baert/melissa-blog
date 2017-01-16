@@ -1,9 +1,7 @@
 <ul>
 $for(trips)$
-    $if(title)$
-        <li>$title$</li>
-    $else$
-        <li>No title</li>
-    $endif$
+    <li>
+        <a href="$url$">$title$</a>
+    </li>
 $endfor$
 </ul>

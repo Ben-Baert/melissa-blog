@@ -16,7 +16,7 @@ import           Utils
 
 main :: IO ()
 main = hakyllWith config $ do
-    match "pictures/*" $ do
+    match ("pictures/*.jpg" .||. "pictures/*.png" .||. "pictures/*.gif") $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -83,7 +83,7 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
-
+{-
     albums <- buildCategories "pictures/**" (fromCapture "album/*.html")
 
     tagsRules albums $ \category pattern -> do
@@ -101,9 +101,10 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" ctx
                 >>= relativizeUrls
                 >>= cleanIndexUrls
-
+-}
     trips <- buildCategories "travel/*/day-*.md" (fromCapture "travel/*.html")
 
+{-
     tagsRules trips $ \trip pattern -> do
         let title = "Trip to " ++ (prettyCategory trip)
         let metaIdent = fromFilePath $ "travel/" ++ trip ++ "/metadata.yml"
@@ -122,7 +123,8 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" ctx
                 >>= relativizeUrls
                 >>= cleanIndexUrls
-    
+
+-}
     match "travel/*/meta.md" $ do
         compile pandocCompiler
 
@@ -142,6 +144,8 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
+{-
+
     match "pictures/**" $ do
         route cleanRoute 
                 
@@ -152,7 +156,7 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
             >>= cleanIndexUrls
-    
+ -}   
     match "travel/*/day-*.md" $ do
         route cleanRoute
 
@@ -179,6 +183,7 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
+{-
     create ["pictures.html"] $ do
         route cleanRoute 
         compile $ do
@@ -193,6 +198,7 @@ main = hakyllWith config $ do
                 >>= relativizeUrls
                 >>= cleanIndexUrls
 
+-}
     create ["travel.html"] $ do
         route cleanRoute
         compile $ do

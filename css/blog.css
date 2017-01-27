@@ -88,7 +88,7 @@ h6, .h6 {
 }
 .blog-title {
   margin-bottom: 0;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: normal;
 }
 .blog-description {
@@ -142,7 +142,7 @@ h6, .h6 {
 }
 .blog-post-title {
   margin-bottom: .25rem;
-  font-size: 2.5rem;
+  font-size: 1.75rem;
 }
 .blog-post-meta {
   margin-bottom: 1.25rem;

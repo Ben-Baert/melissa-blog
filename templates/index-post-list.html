@@ -1,11 +1,11 @@
-<ul>
+<div class="row">
+  <div class="col-sm-8 blog-main">
     $for(posts)$
-        $if(teaser)$
-        <h3>$if(category)$$category$: $endif$$title$ <small>$date$</small></h3>
-            <p>$teaser$</<p>
-            <a href="$url$">Read more</a>
-        $else$
-        <a href="$url$"><h3>$title$ <small>$date$</small></h3></a>
-        $endif$        
+        <div class="blog-post">
+        <h2 class="blog-post-title">$title$</h2>
+        <p class="blog-post-meta">$date$ by $author$ $if(category)$ in $category$$endif$</p>
+        <p>$teaser$</<p>
+        <p><a href="$url$">Read more</a></p>
+      </div>
     $endfor$
 </ul>

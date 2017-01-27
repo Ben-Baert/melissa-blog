@@ -220,7 +220,6 @@ main = hakyllWith config $ do
             posts <- (fmap (take 10)) . recentFirst =<< loadAll postPattern
             let indexCtx =
                     listField "posts" (categoryCtx tags categories) (return posts) `mappend`
-                    constField "title" "Home"                                      `mappend`
                     defaultContext
 
             getResourceBody

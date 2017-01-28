@@ -1,5 +1,5 @@
 ---
-title: Why I chose to study at Open University and become a 'Digital Nomad Student'
+title: Why I chose to study at Open University
 tags: open-university, mathematics, digital-nomad
 date: 2017-01-16
 ---

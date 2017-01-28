@@ -27,7 +27,7 @@ main = hakyllWith config $ do
     match (fromList ["about.rst", "contact.md"]) $ do
         route   $ cleanRoute
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultCtx
             >>= relativizeUrls
             >>= cleanIndexUrls
 
@@ -41,7 +41,7 @@ main = hakyllWith config $ do
             let ctx =
                     constField "title" title `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
-                    defaultContext
+                    defaultCtx
             makeItem ""
                 >>= loadAndApplyTemplate "templates/tag.html" ctx
                 >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -59,7 +59,7 @@ main = hakyllWith config $ do
             let ctx = 
                     constField "title" title                        `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
-                    defaultContext
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/tag.html" ctx
@@ -69,13 +69,14 @@ main = hakyllWith config $ do
 
     tagsRules categories $ \category pattern -> do
         let title = "Posts in " ++ (prettyCategory category)
-        route cleanRoute
+        route $ gsubRoute "categories/" (const "") `composeRoutes`
+                cleanRoute
         compile $ do
             posts <- recentFirst =<< loadAll pattern
             let ctx =
                     constField "title" title                        `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
-                    defaultContext
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/category.html" ctx
@@ -93,8 +94,8 @@ main = hakyllWith config $ do
             posts <- recentFirst =<< loadAll pattern
             let ctx =
                     constField "title" title                        `mappend`
-                    listField "posts" defaultContext (return posts) `mappend`
-                    defaultContext
+                    listField "posts" defaultCtx (return posts) `mappend`
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/album.html" ctx
@@ -116,7 +117,7 @@ main = hakyllWith config $ do
                     constField "title" title `mappend`
                     constField "departureDate" departureDate `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
-                    defaultContext
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/travel-overview.html" ctx
@@ -151,9 +152,9 @@ main = hakyllWith config $ do
                 
         
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/picture-post.html" defaultContext
+            >>= loadAndApplyTemplate "templates/picture-post.html" defaultCtx
             >>= saveSnapshot "content"
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultCtx
             >>= relativizeUrls
             >>= cleanIndexUrls
  -}   
@@ -175,7 +176,7 @@ main = hakyllWith config $ do
                     field "categories" (\_ -> renderTagList categories) `mappend`
                     listField "posts" teaserCtx (return posts) `mappend`
                     constField "title" "Archives"            `mappend`
-                    defaultContext
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
@@ -190,7 +191,7 @@ main = hakyllWith config $ do
             let pictureCtx = 
                     field "albums" (\_ -> renderTagList albums)            `mappend`   
                     constField "title" "Albums"                          `mappend`
-                    defaultContext
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/pictures.html" pictureCtx
@@ -204,9 +205,9 @@ main = hakyllWith config $ do
         compile $ do
             tripOverviews <- recentFirst =<< loadAll "travel/*/meta.md" 
             let travelCtx = 
-                    listField "trips" defaultContext (return tripOverviews) `mappend`
+                    listField "trips" defaultCtx (return tripOverviews) `mappend`
                     constField "title" "Trips"                `mappend`
-                    defaultContext
+                    defaultCtx
 
             makeItem ""
                 >>= loadAndApplyTemplate "templates/trips.html" travelCtx
@@ -220,7 +221,7 @@ main = hakyllWith config $ do
             posts <- (fmap (take 10)) . recentFirst =<< loadAll postPattern
             let indexCtx =
                     listField "posts" (categoryCtx tags categories) (return posts) `mappend`
-                    defaultContext
+                    defaultCtx
 
             getResourceBody
                 >>= applyAsTemplate indexCtx

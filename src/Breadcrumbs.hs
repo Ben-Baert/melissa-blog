@@ -16,6 +16,7 @@ import           Hakyll                          (Context, field, toFilePath, it
 crumbs :: FilePath -> [H.Html]
 crumbs "/" = []
 crumbs "." = []
+crumbs "index" = []
 -- full url/actual url; get rid of full url
 crumbs fp = (H.a ! A.href (toValue ("/" ++ fp)) $ toHtml $ prettyCategory $ takeBaseName fp) : (crumbs (takeDirectory fp))
 

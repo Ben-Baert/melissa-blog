@@ -15,9 +15,9 @@ import           Data.Maybe                      (fromMaybe)
 --------------------------------------------------------------------------------
 
 --getTitle :: FilePath -> String
-getTitle fp = do
-    title <- getMetadataField (fromFilePath fp) "title"  
-    fromMaybe title (takeBaseName fp)
+--getTitle fp = do
+--    title <- getMetadataField (fromFilePath fp) "title"  
+--    fromMaybe title (takeBaseName fp)
 
 crumbs :: FilePath -> [H.Html]
 crumbs "/" = []

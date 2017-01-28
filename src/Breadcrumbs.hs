@@ -10,8 +10,14 @@ import           Text.Blaze.Html                 (toHtml, toValue, (!))
 import           Text.Blaze.Html.Renderer.String (renderHtml)
 import           PrettyCategory
 import           System.FilePath                 ((</>), takeBaseName, takeDirectory, splitFileName, dropExtension)
-import           Hakyll                          (Context, field, toFilePath, itemIdentifier)
+import           Hakyll                          (Context, field, toFilePath, fromFilePath, getMetadataField, itemIdentifier)
+import           Data.Maybe                      (fromMaybe)
 --------------------------------------------------------------------------------
+
+--getTitle :: FilePath -> String
+getTitle fp = do
+    title <- getMetadataField (fromFilePath fp) "title"  
+    fromMaybe title (takeBaseName fp)
 
 crumbs :: FilePath -> [H.Html]
 crumbs "/" = []

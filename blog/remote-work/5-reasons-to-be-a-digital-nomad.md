@@ -1,5 +1,5 @@
 ---
-title: 5 reasons why being a Digital Nomad is better than a regular 9-5 job
+title: 5 reasons to be a digital nomad 
 tags: remote-jobs, work
 date: 2016-06-12
 ---
